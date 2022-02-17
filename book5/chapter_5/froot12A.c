@@ -15,9 +15,8 @@ int main()
     }
 
     /* print every other record */
-    for(int i = 0; i < 25; i += 2)
+    for(record = 0; record < 25; record += 2)
     {
-        record = i;
         offset = record * RECSIZE;
         fseek(f, offset, SEEK_SET);
         fread(froot, RECSIZE, 1, f);
