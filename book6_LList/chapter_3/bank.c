@@ -22,8 +22,31 @@ int anum = 0;
 
 int main()
 {
+    FILE *datafile;
+    char *fileName = "bank.dat";
     char ch;
     firsta = NULL;
+
+    datafile = fopen(fileName, "r");
+    if(datafile)
+    {
+        firsta = (struct account *)malloc(sizeof(struct account));
+        currenta = firsta;
+        while(1)
+        {
+            newa = (struct account *)malloc(sizeof(struct account));
+            fread(currenta, sizeof(struct account), 1, datafile);
+            if(currenta->next == NULL)
+            {
+                free(newa);
+                break;
+            }
+            currenta->next = newa;
+            currenta = newa;
+        }
+        fclose(datafile);
+        anum = currenta->number;
+    }
 
     do
     {
@@ -63,6 +86,26 @@ int main()
         clearInput();
     } while (ch != 'Q');
     
+    /* Save the records to disk */
+    currenta = firsta;
+    if(currenta == NULL) /* No data to write */
+        return(0);       /* END OF PROGRAM */
+
+    datafile = fopen(fileName, "w");
+    if(datafile == NULL)
+    {
+        printf("Error writing to %s\n", fileName);
+        return(1);
+    }
+
+    /* write each record to disk */
+    while(currenta != NULL)
+    {
+        fwrite(currenta, sizeof(struct account), 1, datafile);
+        currenta = currenta->next;
+    }
+    fclose(datafile);
+
     return 0;
 }
 
